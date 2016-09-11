@@ -101,7 +101,8 @@ class DB {
      * @return array Array of array with records and record field values
      */
 
-    public function queryPage($sql, $par, $cur, $siz) {
+	/*    
+	public function queryPage($sql, $par, $cur, $siz) {
         // $sql["ord"] is required to have a value
 	$sql = "WITH records AS (
 			SELECT ROW_NUMBER() OVER(ORDER BY ".$sql['ord'].") AS RowNum, 
@@ -119,6 +120,7 @@ class DB {
 
         return $data;
     }
+	*/
     
     /*
      * Returns record count
@@ -130,6 +132,8 @@ class DB {
      * @param array $par with all values to be replaced in sql
      * @return int
      */
+
+	/*
     public function recordCount($sql, $par) {
         // Use 'DISTINCT' before columns for unique rows
         $sql = "SELECT COUNT(".$sql['col'].") AS cnt from ".$sql['frm']." where ".$sql['whr'];
@@ -141,6 +145,7 @@ class DB {
         $data = $data['cnt'];
         return $data;
     }
+	
 
     public function pageCount($sql, $par, $siz) {
         // Use 'DISTINCT' before columns for unique rows
@@ -155,6 +160,7 @@ class DB {
         $data = $data % $siz ? $pc + 1 : $pc ;
         return $data;
     }
+	*/
 // ==============================================================	
 
 // --------------------------------------------------------------------
@@ -237,7 +243,7 @@ class DB {
 		$data = $this->query("get","SELECT @@RowCount", array());
         return $data;
     }
-    
+// --------------------------------------------------------------------    
     public function execsp($typ,$sql,$par) {
         // Execute stored procedure
         $count = 0;
@@ -279,8 +285,8 @@ class DB {
         return $data;
             
     }
-	
-	public function formatData($data) {
+// --------------------------------------------------------------------	
+	public function formatData($data) {  // supports jsonp
 		$data = json_encode($data);
 		if(isset($_GET["callback"])) {
 			return $_GET["callback"]."(".$data.")";
@@ -306,11 +312,35 @@ class DB {
         // Lazy load connection
         $dsn = "";
         if($this->_connection === null) {
-			$dsn = "sqlsrv:Server=".$this->_config['db']['host'].";Database=".$this->_config['db']['db'];
+			switch($this->_config['db']['drvr']) {
+				case "sqlsrv":
+					$dsn = "sqlsrv:Server=".$this->_config['db']['host'].";Database=".$this->_config['db']['db'];
+					break;
+				case "mssql":
+					$dsn = "dblib:version:7.0;charset=UTF-8;host=".$this->_config['db']['host'].";dbname=".$this->_config['db']['db'].";";
+					break;
+				case "mysql":
+					$dsn = "mysql:host=".$this->_config['db']['host'].";dbname=".$this->_config['db']['db'];
+					break;
+				case "sqlite":
+					$dsn = "sqlite:".$this->_config['db']['db'];  // db = full path to database file (sqlite3 databases only)
+					break;
+			}
+			
             try {
                 $this->_connection = new PDO($dsn, $this->_config['db']['usr'], $this->_config['db']['pwd']);
-                $this->_connection -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-				$this->_connection -> setAttribute(PDO::SQLSRV_ATTR_QUERY_TIMEOUT, 300);  // added 8/24/2016 [SC]
+				switch($this->_config['db']['drvr']) {
+					case "sqlsrv":				
+						$this->_connection -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+						$this->_connection -> setAttribute(PDO::SQLSRV_ATTR_QUERY_TIMEOUT, 300);  // added 8/24/2016 [SC]
+						break;
+					case "mssql":
+						$this->_connection -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+						break;
+					case "mysql":
+						$this->_connection -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+						break;
+				}
             }
             catch(PDOException $e) {
                 print "Connection to database failed!";
