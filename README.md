@@ -9,7 +9,7 @@ php database querying for sqlsrv, mssql, mysql, sqlite
 
 In development...
 ##DB6.2
-  * Consolidation of database versions.
+  * Consolidation of database versions (sqlsrv, odbc(mssql), mysql, sqlite).
 (Note: Directories holding Sqlite databases must be writable by the web server.)
 
 ##DB6.3
