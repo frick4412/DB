@@ -10,8 +10,7 @@ php database querying for sqlsrv, mssql, mysql, sqlite
 In development...
 ##DB6.2
   * Consolidation of database versions.
-  * 
-  (Note: Directories holding Sqlite databases must be writable by the web server.)
+(Note: Directories holding Sqlite databases must be writable by the web server.)
 
 ##DB6.3
   * Token validation.
