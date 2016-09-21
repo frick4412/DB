@@ -321,9 +321,11 @@ class DB {
 			$dsn = "dblib:version:7.0;charset=UTF-8;host=".$this->_config['db']['host'].";dbname=".$this->_config['db']['db'].";"; // working	
             try {
                 $this->_connection = new PDO($dsn, $this->_config['db']['usr'], $this->_config['db']['pwd']);
-				//$this->_connection = new PDO($dsn,client,farmfurn);
                 $this->_connection -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-				//$this->_connection -> setAttribute(PDO::SQLSRV_ATTR_QUERY_TIMEOUT, 300);  // added 8/24/2016 [SC]
+		$cmd = $this->_connection->prepare('SET ANSI_WARNINGS ON');
+		$cmd->execute();
+		$cmd = $this->_connectiono->prepare('SET ANSI_NULL ON');
+		$cmd->execute();
             }
             catch(PDOException $e) {
                 print "Connection to database failed!".$e;
