@@ -349,7 +349,7 @@ class DB {
      *
      * @return int Authenticated?
      */
-    private function auth_ad($user, $pass) {
+    public function auth_ad($user, $pass) {
       // *** Don't transfer passwords clear-text. ***
         // ldap extension must be enabled on server
         if (substr($user, 0, 8) != "FARMERS\\") {
@@ -360,12 +360,12 @@ class DB {
 
         if (@ldap_bind($ldap, $user, $pass)) {
             ldap_unbind($ldap);
-            $auth = 1;
+            $auth = true;
         } else {
-            $auth = 0;
+            $auth = false;
         }
         if (strlen($pass) == 0) {
-            $auth = 0;
+            $auth = false;
         }
         return $auth;
     }
