@@ -589,7 +589,7 @@ class DB {
 		}
 	}
 	
-	public function getPasswordHash($username, $appname) {    //  <----------- CHANGE TO PRIVATE METHOD
+	private function getPasswordHash($username, $appname) {    //  <----------- CHANGE TO PRIVATE METHOD
 		$q["sql"] = "SELECT PwHash FROM authLogins WHERE Username = ? and AppName = ? and Active = 'Y'";
 		$q["par"] = array($username, $appname);
 		$stmt = $this->_getAuthConn()->prepare($q["sql"]);
